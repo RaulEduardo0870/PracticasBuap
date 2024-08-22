@@ -12,15 +12,15 @@
 #define DHT_PIN 15
 #define SOLENOID_PIN 2
 
-// Define DHT sensor type
+// Define DHT tipo de sensor
 #define DHT_TYPE DHT11
 
-// Create sensor objects
+// Crear objetos de sensores
 Adafruit_BMP085_Unified bmp = Adafruit_BMP085_Unified();
 DHT dht(DHT_PIN, DHT_TYPE);
 MPU6050 mpu;
 
-// Variables for altitude calculation
+// Variables para el cálculo de la altitud
 float altitudInicial;
 float altitud_previa = 0.0;
 unsigned long tiempo_previo = 0;
@@ -29,23 +29,23 @@ int activar = 0;
 void setup() {
     Serial.begin(115200);
     
-    // Initialize DHT sensor
+    // Initializa DHT sensor
     dht.begin();
     
-    // Initialize BMP180 sensor
+    // Initializa BMP180 sensor
     if (!bmp.begin()) {
         Serial.println("Couldn't find the BMP180 sensor");
         while (1);
     }
     
-    // Initialize MPU6050 sensor
+    // Initializa MPU6050 sensor
     mpu.initialize();
     
-    // Set up GPIO
+    // Configurar GPIO
     pinMode(SOLENOID_PIN, OUTPUT);
     digitalWrite(SOLENOID_PIN, LOW);
     
-    // Get initial altitude
+    // Obtener altitud inicial
     sensors_event_t event;
     bmp.getEvent(&event);
     if (event.pressure) {
@@ -56,7 +56,7 @@ void setup() {
 }
 
 void loop() {
-    // Read BMP180 sensor
+    // Lectura BMP180 sensor
     sensors_event_t event;
     bmp.getEvent(&event);
     if (event.pressure) {
@@ -69,11 +69,11 @@ void loop() {
         altitud_previa = altitud_actual;
         tiempo_previo = tiempo_actual;
 
-        // Create message to send
+        // Crear mensaje para enviar
         char message[256];
         snprintf(message, sizeof(message), "|%.2f:%.2f:%.2f|", event.pressure, altitud_actual, velocidad_vertical);
 
-        // Activate solenoid if conditions are met
+        // Activar el solenoide si se cumplen las condiciones
         if (altitud_actual == 300) {
             activar = 1;
         }
@@ -88,8 +88,8 @@ void loop() {
         }
 
         Serial.println("Sending message: " + String(message));
-        // Implement LoRa send function here
+        // Implementar la función de envío LoRa aquí
 
-        delay(1000); // Wait a second before the next loop
+        delay(1000); // Esperar un segundo antes del siguiente bucle
     }
 }
