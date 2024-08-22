@@ -1,6 +1,11 @@
+//#include <DHT.h>
+#include <DHT_U.h>
+
+#include <DHTesp.h>
+
 #include <Wire.h>
 #include <Adafruit_BMP085_U.h>
-#include <dht.h>
+#include "DHT.h"
 #include <MPU6050.h>
 
 // Define pins
@@ -44,7 +49,7 @@ void setup() {
     sensors_event_t event;
     bmp.getEvent(&event);
     if (event.pressure) {
-        altitudInicial = bmp.pressureToAltitude(event.pressure) + 120;
+        altitudInicial = bmp.pressureToAltitude(1013.25, event.pressure) + 120;
     }
     
     tiempo_previo = millis();
@@ -55,7 +60,7 @@ void loop() {
     sensors_event_t event;
     bmp.getEvent(&event);
     if (event.pressure) {
-        float altitud_actual = bmp.pressureToAltitude(event.pressure) + 120;
+        float altitud_actual = bmp.pressureToAltitude(1013.25, event.pressure) + 120;
         float delta_altitud = altitud_actual - altitud_previa;
         unsigned long tiempo_actual = millis();
         float delta_tiempo = (tiempo_actual - tiempo_previo) / 1000.0;
@@ -88,4 +93,3 @@ void loop() {
         delay(1000); // Wait a second before the next loop
     }
 }
-
